@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/note.dart';
 import '../services/db_service.dart';
 import '../widgets/note_tile.dart';
 import 'note_editor.dart';
-
-class ThemeProvider extends ChangeNotifier {
-  bool _isDarkMode = false;
-  bool get isDarkMode => _isDarkMode;
-
-  void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
-    notifyListeners();
-  }
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -65,18 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quick Notes'),
-        actions: [
-          IconButton(
-            icon: Icon(
-                themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
-            onPressed: () => themeProvider.toggleTheme(),
+        title: const Text(
+          'Quick Note',
+          style: TextStyle(
+            fontWeight: FontWeight.w600, // Semi-bold, not overly bold
           ),
-        ],
+        ),
+        centerTitle: true,
       ),
       body: Column(
         children: [
