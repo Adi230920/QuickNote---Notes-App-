@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text(
           'Quick Note',
           style: TextStyle(
-            fontWeight: FontWeight.w600, // Semi-bold, not overly bold
+            fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
@@ -70,10 +70,14 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Search Notes',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0), // Curved corners
+                ),
+                filled: true,
+                fillColor: Colors.grey[900], // Dark background for contrast
               ),
             ),
           ),
@@ -107,6 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ).then((_) => _loadNotes());
         },
         child: const Icon(Icons.add),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0), // Curved FAB
+        ),
       ),
     );
   }

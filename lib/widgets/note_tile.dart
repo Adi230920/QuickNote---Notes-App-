@@ -17,6 +17,14 @@ class NoteTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      elevation: 4, // Subtle shadow for highlighting
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0), // Rounded corners
+        side: BorderSide(
+          color: Colors.grey[700]!, // Subtle border for highlighting
+          width: 1.0,
+        ),
+      ),
       child: ListTile(
         title: Text(
           note.title,

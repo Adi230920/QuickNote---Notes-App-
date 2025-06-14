@@ -24,7 +24,6 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     if (widget.note != null) {
       _titleController.text = widget.note!.title;
       _contentController.text = widget.note!.content;
-      // If editing, we don't update the creation date
       _creationDate = DateTime.now(); // For simplicity, using current time
     }
   }
@@ -87,12 +86,12 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
           children: [
             TextField(
               controller: _titleController,
-              style: const TextStyle(fontSize: 24), // Larger title font
+              style: const TextStyle(fontSize: 24),
               decoration: const InputDecoration(
                 hintText: 'Title',
-                border: InputBorder.none, // Remove underline
+                border: InputBorder.none,
               ),
-              onChanged: (value) => setState(() {}), // Update character count
+              onChanged: (value) => setState(() {}),
             ),
             const SizedBox(height: 8),
             Text(
@@ -102,16 +101,17 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
                 fontSize: 12,
               ),
             ),
-            const Spacer(), // Pushes content to the bottom
+            const SizedBox(
+                height: 16), // Safe distance between date and content
             TextField(
               controller: _contentController,
-              style: const TextStyle(fontSize: 16), // Smaller content font
+              style: const TextStyle(fontSize: 16),
               decoration: const InputDecoration(
                 hintText: 'Start typing',
-                border: InputBorder.none, // Remove underline
+                border: InputBorder.none,
               ),
               maxLines: null,
-              onChanged: (value) => setState(() {}), // Update character count
+              onChanged: (value) => setState(() {}),
             ),
           ],
         ),
