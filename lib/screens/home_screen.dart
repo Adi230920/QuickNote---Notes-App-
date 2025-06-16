@@ -110,10 +110,10 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(builder: (context) => const NoteEditorScreen()),
           ).then((_) => _loadNotes());
         },
-        child: const Icon(Icons.add),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0), // Curved FAB
         ),
+        child: const Icon(Icons.add),
       ),
     );
   }
