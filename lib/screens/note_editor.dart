@@ -70,6 +70,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Prevent resizing when keyboard appears
       appBar: AppBar(
         title: Text(widget.note == null ? 'New Note' : 'Edit Note'),
         actions: [
@@ -79,41 +80,47 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _titleController,
-              style: const TextStyle(fontSize: 24),
-              decoration: const InputDecoration(
-                hintText: 'Title',
-                border: InputBorder.none,
+      body: SingleChildScrollView(
+        // Make the screen scrollable
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _titleController,
+                style: const TextStyle(fontSize: 24),
+                decoration: const InputDecoration(
+                  hintText: 'Title',
+                  border: InputBorder.none,
+                ),
+                onChanged: (value) => setState(() {}),
               ),
-              onChanged: (value) => setState(() {}),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${_formatDateTime(_creationDate)} | ${_calculateCharacterCount()} characters',
-              style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 12,
+              const SizedBox(height: 8),
+              Text(
+                '${_formatDateTime(_creationDate)} | ${_calculateCharacterCount()} characters',
+                style: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 12,
+                ),
               ),
-            ),
-            const SizedBox(
-                height: 16), // Safe distance between date and content
-            TextField(
-              controller: _contentController,
-              style: const TextStyle(fontSize: 16),
-              decoration: const InputDecoration(
-                hintText: 'Start typing',
-                border: InputBorder.none,
+              const SizedBox(height: 16),
+              TextField(
+                controller: _contentController,
+                style: const TextStyle(fontSize: 16),
+                decoration: const InputDecoration(
+                  hintText: 'Start typing',
+                  border: InputBorder.none,
+                ),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                onChanged: (value) => setState(() {}),
               ),
-              maxLines: null,
-              onChanged: (value) => setState(() {}),
-            ),
-          ],
+              SizedBox(
+                  height: MediaQuery.of(context).viewInsets.bottom +
+                      16), // Add padding for keyboard
+            ],
+          ),
         ),
       ),
     );
