@@ -26,7 +26,9 @@ class DatabaseService {
       CREATE TABLE notes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
-        content TEXT NOT NULL
+        content TEXT NOT NULL,
+        isLocked INTEGER NOT NULL DEFAULT 0,
+        pin TEXT
       )
     ''');
   }

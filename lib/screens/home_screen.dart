@@ -52,6 +52,55 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadNotes();
   }
 
+  Future<void> _lockNote(Note note) async {
+    final pinController = TextEditingController();
+    String? newPin;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Set PIN to Lock Note'),
+          content: TextField(
+            controller: pinController,
+            keyboardType: TextInputType.number,
+            maxLength: 4,
+            decoration: const InputDecoration(hintText: 'Enter 4-digit PIN'),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (pinController.text.length == 4 &&
+                    pinController.text.isNumericOnly) {
+                  newPin = pinController.text;
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please enter a 4-digit PIN')),
+                  );
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (newPin != null) {
+      final updatedNote = Note(
+        id: note.id,
+        title: note.title,
+        content: note.content,
+        isLocked: true,
+        pin: newPin,
+      );
+      await DatabaseService.instance.updateNote(updatedNote);
+      _loadNotes();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,10 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 labelText: 'Search Notes',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0), // Curved corners
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
                 filled: true,
-                fillColor: Colors.grey[900], // Dark background for contrast
+                fillColor: Colors.grey[900],
               ),
             ),
           ),
@@ -86,17 +135,21 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: _filteredNotes.length,
               itemBuilder: (context, index) {
                 final note = _filteredNotes[index];
-                return NoteTile(
-                  note: note,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NoteEditorScreen(note: note),
-                      ),
-                    ).then((_) => _loadNotes());
-                  },
-                  onDelete: () => _deleteNote(note.id!),
+                return GestureDetector(
+                  onLongPress: () => _lockNote(note),
+                  child: NoteTile(
+                    note: note,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NoteEditorScreen(note: note),
+                        ),
+                      ).then((_) => _loadNotes());
+                    },
+                    onDelete: () => _deleteNote(note.id!),
+                    isLocked: note.isLocked,
+                  ),
                 );
               },
             ),
@@ -111,10 +164,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ).then((_) => _loadNotes());
         },
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0), // Curved FAB
+          borderRadius: BorderRadius.circular(15.0),
         ),
         child: const Icon(Icons.add),
       ),
     );
   }
+}
+
+extension StringExtension on String {
+  bool get isNumericOnly => double.tryParse(this) != null;
 }

@@ -16,16 +16,68 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   late DateTime _creationDate;
+  bool _didLoad = false;
 
   @override
   void initState() {
     super.initState();
     _creationDate = DateTime.now();
-    if (widget.note != null) {
-      _titleController.text = widget.note!.title;
-      _contentController.text = widget.note!.content;
-      _creationDate = DateTime.now(); // For simplicity, using current time
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_didLoad && widget.note != null) {
+      _didLoad = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.note!.isLocked) {
+          _showUnlockDialog();
+        } else {
+          _titleController.text = widget.note!.title;
+          _contentController.text = widget.note!.content;
+        }
+      });
     }
+  }
+
+  void _showUnlockDialog() {
+    final pinController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Enter PIN to Unlock'),
+          content: TextField(
+            controller: pinController,
+            keyboardType: TextInputType.number,
+            maxLength: 4,
+            decoration: const InputDecoration(hintText: 'Enter 4-digit PIN'),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (pinController.text == widget.note!.pin &&
+                    pinController.text.length == 4) {
+                  setState(() {
+                    _titleController.text = widget.note!.title;
+                    _contentController.text = widget.note!.content;
+                  });
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Incorrect PIN')),
+                  );
+                }
+              },
+              child: const Text('Unlock'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -47,6 +99,8 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       id: widget.note?.id,
       title: _titleController.text,
       content: _contentController.text,
+      isLocked: widget.note?.isLocked ?? false,
+      pin: widget.note?.pin,
     );
 
     final db = DatabaseService.instance;
@@ -70,7 +124,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false, // Prevent resizing when keyboard appears
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(widget.note == null ? 'New Note' : 'Edit Note'),
         actions: [
@@ -81,7 +135,6 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        // Make the screen scrollable
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -116,9 +169,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
                 keyboardType: TextInputType.multiline,
                 onChanged: (value) => setState(() {}),
               ),
-              SizedBox(
-                  height: MediaQuery.of(context).viewInsets.bottom +
-                      16), // Add padding for keyboard
+              SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 16),
             ],
           ),
         ),
