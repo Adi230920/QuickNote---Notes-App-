@@ -1,4 +1,5 @@
-# notes_app
+<h1>QuickNote</h1>
+<h2>This is my first flutter application created by me and grok ai within a span of 5 days </h2>
 
 A new Flutter project.
 
