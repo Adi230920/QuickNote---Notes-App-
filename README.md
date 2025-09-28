@@ -3,6 +3,8 @@
 
 A new Flutter project.
 
+<h2>You can download my app using the apk file given in the above github with commented message as "Add files via upload"</h2>
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
